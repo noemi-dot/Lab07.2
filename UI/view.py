@@ -37,9 +37,33 @@ class View:
 
         # --- Sezione 2: Filtraggio ---
         # TODO
+        # Dropdown per selezionare la biblioteca
+        self.dd_biblioteca = ft.Dropdown(
+            label="Biblioteca",
+            hint_text="Seleziona una biblioteca",
+            width=300,
+            options=[ft.dropdown.Option("Nessun filtro")],  # <-- Le opzioni partono già qui
+            on_select=lambda e: self.controller.seleziona_biblioteca(e)
+        )
 
-        # Sezione 3: Libri
-        # TODO
+        # Dropdown per selezionare il genere
+        self.dd_genere = ft.Dropdown(
+            label="Genere",
+            hint_text="Seleziona un genere",
+            width=300,
+            options=[ft.dropdown.Option("Nessun filtro")],  # <-- Le opzioni partono già qui
+            on_select=lambda e: self.controller.seleziona_genere(e)
+        )
+        # --- Sezione 3: Libri ---
+        # Pulsante per avviare la ricerca con i filtri
+        self.btn_mostra_libri = ft.Button(
+            content="Mostra Libri",    #scrivo "content" invece di "text" (per la nuova versione di Flet)
+            width=200,
+            on_click=lambda e: self.controller.mostra_libri(e)
+        )
+
+        # ListView per mostrare i risultati in modo scorrevole
+        self.list_view_libri = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=False)
 
         # --- Toggle Tema ---
         self.toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=self.cambia_tema)
@@ -53,13 +77,33 @@ class View:
             ft.Divider(),
 
             # Sezione 2: Filtraggio
-            # TODO
+            ft.Row(
+                controls=[self.dd_biblioteca, self.dd_genere],
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            ft.Divider(),
 
-            # Sezione 3: Libri
-            # TODO
+        # Sezione 3: Libri
+        # TODO
+            ft.Row(
+                controls=[self.btn_mostra_libri],
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            ft.Container(
+                content=self.list_view_libri,
+                height=350,
+                border_radius=10,
+                padding=10,
+            )
         )
 
         self.page.scroll = "adaptive"
+
+        # 🟢 ORA I COMPONENTI ESISTONO: possiamo popolare i dropdown in sicurezza!
+        if self.controller:
+            self.controller.popola_dropdown()
+
+
         self.page.update()
 
     def cambia_tema(self, e):
